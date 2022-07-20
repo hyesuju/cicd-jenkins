@@ -1,5 +1,47 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+          label 'sample-app'
+          defaultContainer 'jnlp'
+          yaml """
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                labels:
+                  jenkins/jenkins-jenkins-agent: "true"
+                  jenkins/label: "jenkins-jenkins-agent"
+                spec:
+                  securityContext:
+                    fsGroup: 1950    # Group ID of docker group on k8s nodes.
+                  # Use service account that can deploy to all namespaces
+                  serviceAccountName: jenkins
+                  containers:
+                  - name: jnlp
+                    image: human537/inbound-agent:v1
+                    command:
+                    - cat
+                    tty: true
+                    volumeMounts:
+                    - mountPath: "/home/jenkins/agent"
+                      name: "workspace-volume"
+                      readOnly: false
+                    - mountPath: /var/run/docker.sock
+                      name: docker-sock
+                      readOnly: true
+                    workingDir: "/home/jenkins/agent"
+                  nodeSelector:
+                    kubernetes.io/os: "linux"
+                  restartPolicy: "Never"
+                  volumes:
+                  - emptyDir:
+                      medium: ""
+                    name: "workspace-volume"
+                  - name: docker-sock
+                    hostPath:
+                      path: "/var/run/docker.sock"
+                """
+        }
+    }
     environment {
         DOCKER_IMAGE_NAME = "human537/cicdtest"
     }
