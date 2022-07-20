@@ -10,7 +10,7 @@ spec:
     fsGroup: 1950    # Group ID of docker group on k8s nodes.
   serviceAccountName: jenkins
   containers:
-  - name: build
+  - name: topgun
     image: human537/inbound-agent:v1
     command:
     - cat
@@ -40,7 +40,7 @@ pipeline {
         kubernetes {
 /*          label 'sample-app' */
           yaml podTemplate
-          defaultContainer 'build'
+          defaultContainer 'topgun'
         }
     }
     environment {
@@ -48,8 +48,11 @@ pipeline {
     }
     stages {
         stage('Build') {
+            when {
+                branch 'master'
+            }
             steps {
-                container('build') {
+                container('topgun') {
                   sh """
                     echo 'Running build automation'
                   """
@@ -60,16 +63,16 @@ pipeline {
             when {
                 branch 'master'
             }
-            steps {    
-                /*
-                script {
-                    app = docker.build(DOCKER_IMAGE_NAME)
-                    app.inside {
-                        sh 'echo Hello, World!'
+            steps {
+                container('topgun') {
+                    script {
+                        app = docker.build(DOCKER_IMAGE_NAME)
+                        app.inside {
+                            sh 'echo Hello, World!'
+                        }
                     }
-                } 
-                */
-            echo 'Running Build Docker Image'
+                    echo 'Running Build Docker Image'
+                }
             }
         }
         stage('Push Docker Image') {
