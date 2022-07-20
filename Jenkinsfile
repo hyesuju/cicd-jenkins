@@ -40,7 +40,7 @@ pipeline {
         kubernetes {
 /*          label 'sample-app' */
           yaml podTemplate
-          defaultContainer 'jnlp'
+          defaultContainer 'build'
         }
     }
     environment {
