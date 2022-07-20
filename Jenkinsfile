@@ -61,7 +61,8 @@ pipeline {
                 container('golang') {
                   sh """
                     echo 'Running build automation'
-                    cd /home/jenkins/agent/workspace/test_master/src
+                    ln -s `pwd` /go/src/sample-app
+                    cd /go/src/sample-app
                     go test
                   """
                 }
