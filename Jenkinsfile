@@ -55,13 +55,15 @@ pipeline {
             when {
                 branch 'master'
             }
-            steps {       
+            steps {    
+                /*
                 script {
                     app = docker.build(DOCKER_IMAGE_NAME)
                     app.inside {
                         sh 'echo Hello, World!'
                     }
-                }            
+                } 
+                */
             echo 'Running Build Docker Image'
             }
         }
@@ -69,13 +71,15 @@ pipeline {
             when {
                 branch 'master'
             }
-            steps {         
+            steps {     
+                /*
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
-                }                  
+                } 
+                */
             echo 'Running Push Docker Image'                
             }
         }                
@@ -85,9 +89,11 @@ pipeline {
             }
             steps {                
                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
-                    sh 'chmod u+x ./kubectl'
-                    sh './kubectl apply -f nginx-kube.yaml -n default'
+                  container('jnlp') {
+                      sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
+                      sh 'chmod u+x ./kubectl'
+                      sh './kubectl apply -f nginx-kube.yaml -n default'
+                  }
                 }                
             }
         }
