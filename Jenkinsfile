@@ -8,10 +8,9 @@ labels:
 spec:
   securityContext:
     fsGroup: 1950    # Group ID of docker group on k8s nodes.
-  # Use service account that can deploy to all namespaces
   serviceAccountName: jenkins
   containers:
-  - name: jnlp
+  - name: build
     image: human537/inbound-agent:v1
     command:
     - cat
@@ -50,9 +49,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                container('jnlp') {
+                container('build') {
                   sh """
-                      echo 'Running build automation'
+                    echo 'Running build automation'
                   """
                 }
             }
