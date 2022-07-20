@@ -23,6 +23,12 @@ spec:
       name: docker-sock
       readOnly: true
     workingDir: "/home/jenkins/agent"
+  - name: golang
+    image: golang:1.10
+    command:
+    - cat
+    tty: true
+    workingDir: "/home/jenkins/agent"
   nodeSelector:
     kubernetes.io/os: "linux"
   restartPolicy: "Never"
@@ -52,9 +58,11 @@ pipeline {
                 branch 'master'
             }
             steps {
-                container('topgun') {
+                container('golang') {
                   sh """
                     echo 'Running build automation'
+                    cd /home/jenkins/agent/src
+                    go test
                   """
                 }
             }
