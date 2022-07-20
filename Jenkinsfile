@@ -50,7 +50,11 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Running build automation'
+                container('jnlp') {
+                  sh """
+                      echo 'Running build automation'
+                  """
+                }
             }
         }
         stage('Build Docker Image') {
