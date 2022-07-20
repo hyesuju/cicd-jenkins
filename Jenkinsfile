@@ -95,14 +95,16 @@ pipeline {
             when {
                 branch 'master'
             }
-            steps {                
-                withKubeConfig([credentialsId: 'kubeconfig']) {
-                  container('build') {
-                      sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
-                      sh 'chmod u+x ./kubectl'
-                      sh './kubectl apply -f nginx-kube.yaml -n default'
-                  }
-                }                
+            steps {
+                container('topgun') {
+                    withKubeConfig([credentialsId: 'kubeconfig']) {
+                        container('build') {
+                            sh 'curl -LO "https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl"'
+                            sh 'chmod u+x ./kubectl'
+                            sh './kubectl apply -f nginx-kube.yaml -n default'
+                        }
+                    }
+                }
             }
         }
     }
