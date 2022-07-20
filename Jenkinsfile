@@ -64,6 +64,7 @@ pipeline {
                     cd src
                     ln -s `pwd` /go/src/sample-app
                     cd /go/src/sample-app
+                    go mod init
                     go test
                   """
                 }
