@@ -68,7 +68,7 @@ pipeline {
                     script {
                         app = docker.build(DOCKER_IMAGE_NAME)
                         app.inside {
-                            sh 'echo Hello, World!'
+                            sh 'echo Hello, World!123'
                         }
                     }
                     echo 'Running Build Docker Image'
@@ -80,15 +80,15 @@ pipeline {
                 branch 'master'
             }
             steps {     
-                /*
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
-                        app.push("${env.BUILD_NUMBER}")
-                        app.push("latest")
+                container('topgun') {
+                    script {
+                        docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                            app.push("${env.BUILD_NUMBER}")
+                            app.push("latest")
+                        }
                     }
-                } 
-                */
-            echo 'Running Push Docker Image'                
+                    echo 'Running Push Docker Image'
+                }
             }
         }                
         stage('DeployToProduction') {
