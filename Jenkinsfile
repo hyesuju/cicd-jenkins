@@ -24,7 +24,7 @@ spec:
       readOnly: true
     workingDir: "/home/jenkins/agent"
   - name: golang
-    image: golang:1.18.4-alpine3.15
+    image: golang:1.10
     command:
     - cat
     tty: true
