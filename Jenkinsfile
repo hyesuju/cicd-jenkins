@@ -22,19 +22,12 @@ spec:
     - mountPath: /var/run/docker.sock
       name: docker-sock
       readOnly: true
-    - mountPath: "/go"
-      name: "go-volume"
-      readOnly: false
-    workingDir: "/home/jenkins/agent"    
+    workingDir: "/home/jenkins/agent"
   - name: golang
     image: golang:1.10
     command:
     - cat
     tty: true
-    volumeMounts:
-    - mountPath: "/go"
-      name: "go-volume"
-      readOnly: false
     workingDir: "/home/jenkins/agent"
   nodeSelector:
     kubernetes.io/os: "linux"
@@ -43,9 +36,6 @@ spec:
   - emptyDir:
       medium: ""
     name: "workspace-volume"
-  - emptyDir:
-      medium: ""
-    name: "go-volume"
   - name: docker-sock
     hostPath:
       path: "/var/run/docker.sock"
