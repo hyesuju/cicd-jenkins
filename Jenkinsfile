@@ -76,12 +76,12 @@ pipeline {
             }
             steps {
                 container('topgun') {
-//                     script {
-//                         app = docker.build(DOCKER_IMAGE_NAME)
-//                         app.inside {
-//                             sh 'echo Hello, World!123'
-//                         }
-//                     }
+                    script {
+                        app = docker.build(DOCKER_IMAGE_NAME)
+                        app.inside {
+                            sh 'echo Hello, World!123'
+                        }
+                    }
                     echo 'Running Build Docker Image'
                 }
             }
