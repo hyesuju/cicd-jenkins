@@ -3,6 +3,6 @@ FROM golang:1.10
 COPY . .
 # RUN go get cloud.google.com/go/compute/metadata
 # RUN go install -v
-CMD ["app"]
+CMD ["./app"]
 # FROM busybox
 # RUN echo "hello world"
