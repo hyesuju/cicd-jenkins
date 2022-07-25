@@ -83,7 +83,7 @@ pipeline {
                   sh """
                     echo 'Running build automation'
                     cd src
-                    ln -s `pwd` /go/src/sample-app
+                    ln -s `pwd` /go/src/html
                     cd /go/src/html
                     go get cloud.google.com/go/compute/metadata
                     go build
