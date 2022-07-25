@@ -80,11 +80,6 @@ pipeline {
             }
             steps {
                 container('topgun') {
-                    sh """
-                      cd src
-                      mkdir -p /go/src/app
-                      cp src/* /go/src/app/
-                    """
                     script {
                         app = docker.build(DOCKER_IMAGE_NAME)
                         app.inside {
