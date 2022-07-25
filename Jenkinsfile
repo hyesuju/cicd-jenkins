@@ -29,13 +29,17 @@ spec:
     - cat
     tty: true
     workingDir: "/home/jenkins/agent"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
   nodeSelector:
     kubernetes.io/os: "linux"
   restartPolicy: "Never"
   volumes:
-  - emptyDir:
-      medium: ""
-    name: "workspace-volume"
+  - name: "workspace-volume"
+    emptyDir:
+      medium: ""    
   - name: docker-sock
     hostPath:
       path: "/var/run/docker.sock"
@@ -53,7 +57,7 @@ pipeline {
         DOCKER_IMAGE_NAME = "human537/cicdtest"
     }
     stages {
-        stage('Build') {
+        stage('Test') {
             when {
                 branch 'master'
             }
@@ -70,12 +74,31 @@ pipeline {
                 }
             }
         }
+        stage('Build') {
+            when {
+                branch 'master'
+            }
+            steps {
+                container('golang') {
+                  sh """
+                    echo 'Running build automation'
+                    cd src
+                    ln -s `pwd` /go/src/sample-app
+                    cd /go/src/html
+                    go get cloud.google.com/go/compute/metadata
+                    go build
+                    cp /go/src/html/html /home/jenkins/agent                    
+                  """
+                }
+            }
+        }
         stage('Build Docker Image') {
             when {
                 branch 'master'
             }
             steps {
                 container('topgun') {
+                    sh 'cp /home/jenkins/agent/html .'
                     script {
                         app = docker.build(DOCKER_IMAGE_NAME)
                         app.inside {
