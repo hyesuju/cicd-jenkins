@@ -74,12 +74,31 @@ pipeline {
                 }
             }
         }
+        stage('Build') {
+            when {
+                branch 'master'
+            }
+            steps {
+                container('golang') {
+                  sh """
+                    echo 'Running build automation'
+                    cd src
+                    ln -s `pwd` /go/src/app
+                    cd /go/src/app
+                    go get cloud.google.com/go/compute/metadata
+                    go build
+                    cp /go/src/app/app /home/jenkins/agent                    
+                  """
+                }
+            }
+        }
         stage('Build Docker Image') {
             when {
                 branch 'master'
             }
             steps {
                 container('topgun') {
+                    sh 'cp /home/jenkins/agent/app .'
                     script {
                         app = docker.build(DOCKER_IMAGE_NAME)
                         app.inside {
