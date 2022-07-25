@@ -57,7 +57,7 @@ pipeline {
         DOCKER_IMAGE_NAME = "human537/cicdtest"
     }
     stages {
-        stage('Test') {
+        stage('Unit Test') {
             when {
                 branch 'master'
             }
@@ -74,31 +74,17 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
-            when {
-                branch 'master'
-            }
-            steps {
-                container('golang') {
-                  sh """
-                    echo 'Running build automation'
-                    cd src
-                    ln -s `pwd` /go/src/html
-                    cd /go/src/html
-                    go get cloud.google.com/go/compute/metadata
-                    go build
-                    cp /go/src/html/html /home/jenkins/agent                    
-                  """
-                }
-            }
-        }
         stage('Build Docker Image') {
             when {
                 branch 'master'
             }
             steps {
                 container('topgun') {
-                    sh 'cp /home/jenkins/agent/html .'
+                    sh """
+                      cd src
+                      mkdir -p /go/src/app
+                      cp src/* /go/src/app/
+                    """
                     script {
                         app = docker.build(DOCKER_IMAGE_NAME)
                         app.inside {
