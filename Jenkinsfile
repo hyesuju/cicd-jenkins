@@ -135,8 +135,8 @@ pipeline {
                         sh 'curl -LO "https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl"'
                         sh 'chmod u+x ./kubectl'
                         sh """
-                           ./kubectl patch deployment nginx -n default -p \
-                           '{"spec":{"template":{"spec":{"containers":[{"name":"myapp","image":"${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}"}]}}}}'
+                           ./kubectl patch deployment app -n default -p \
+                           '{"spec":{"template":{"spec":{"containers":[{"name":"app","image":"${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}"}]}}}}'
                            """
                     }
                 }
